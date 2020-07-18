@@ -1,0 +1,30 @@
+name: deploy to lambda
+on: push
+jobs:
+  build:
+    name: deploy to lambda
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependency
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -t ./
+      - name: Make Zip from Source Files
+        run: |
+          zip -r zipped.zip .
+      - name: Upload to Lambda
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: my_lambda
+          zip_file: zipped.zip
