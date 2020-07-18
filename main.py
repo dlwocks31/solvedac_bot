@@ -50,20 +50,19 @@ def main():
         mxlen = len(max((i[1] for i in data), key=len))
         fmt = f'%{mxnum}d. %{mxlen}s - %s'
         text = '```' + '\n'.join(fmt % tuple(l) for l in data) + '```'
-        post(url, json={'text': text})
-        upload_json(data)
-        return text
+        resp = post(url, json={'text': text})
+        return [resp.status_code, text]
     else:
-        return 'EQUAL'
+        return [200, 'EQUAL']
 
 
 def lambda_handler(event, context):
     try:
-        txt = main()
-        print(txt)
+        result = main()
+        print(result)
         return {
-            'statusCode': 200,
-            'body': txt
+            'statusCode': result[0],
+            'body': f'Status code = {result[0]}.\n{result[1]}'
         }
     except Exception as e:
         post(url, json={'text': str(e)})
