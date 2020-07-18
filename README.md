@@ -17,7 +17,7 @@ Github Action을 통한 간단한 CD가 구축되어 있습니다.
 테스트해보진 않았지만 아마 아래와 같이 설정하면 충분할 것입니다.
 ### On Local
 1. 슬랙 Workspace를 만들거나 기존 Workspace에서 hook url을 만든다. `https://hooks.slack.com/services/TXXXX1236/BYYYY4569/Iqwertyuiopy` 와 같은 형태.
-1. .env 파일 설정 (하단 Before Deploy 항목 참고)
+1. .env 파일 설정 (하단 Variables 항목 참고)
 2. S3관련 권한이 있도록 AWS CLI를 설정한다.
 3. `python main.py`
 
