@@ -46,6 +46,7 @@ def main():
 
     data = [tmp(i - 2), tmp(i - 1), tmp(i), tmp(i + 1), tmp(i + 2)]
     if data != download_json():
+        upload_json(data)
         mxnum = len(str(data[-1][0]))
         mxlen = len(max((i[1] for i in data), key=len))
         fmt = f'%{mxnum}d. %{mxlen}s - %s'
