@@ -31,6 +31,10 @@ def upload_json(obj):
 def download_json():
     return json.loads(s3.Object(bucketname, filename).get()['Body'].read().decode('utf-8'))
 
+
+def send_slack(message):
+    return post(url, json={'text': message})
+
 def main():
     ls = ranklist()
     idx = None
@@ -51,10 +55,11 @@ def main():
         mxlen = len(max((i[1] for i in data), key=len))
         fmt = f'%{mxnum}d. %{mxlen}s - %s'
         text = '```' + '\n'.join(fmt % tuple(l) for l in data) + '```'
-        resp = post(url, json={'text': text})
+        resp = send_slack(text)
         return [resp.status_code, text]
     else:
-        return [200, 'EQUAL']
+        resp = send_slack('I am alive!')
+        return [resp.status_code, 'EQUAL']
 
 
 def lambda_handler(event, context):
