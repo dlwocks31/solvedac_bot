@@ -58,8 +58,7 @@ def main():
         resp = send_slack(text)
         return [resp.status_code, text]
     else:
-        resp = send_slack('I am alive!')
-        return [resp.status_code, 'EQUAL']
+        return [200, 'EQUAL']
 
 
 def lambda_handler(event, context):
