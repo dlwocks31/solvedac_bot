@@ -36,20 +36,14 @@ def send_slack(message):
     return post(url, json={'text': message})
 
 def generate_data():
-    ls = ranklist()
-    idx = None
-    for i, user in enumerate(ls):
-        if user['user_id'] == my_nickname:
-            idx = i
-            break
-    if idx is None:
-        raise RuntimeError('idx not found')
-
-    def tmp(i):
-        return [i + 1, ls[i]['user_id'], '{:,}'.format(ls[i]['exp'])]
-
-    return [tmp(i - 2), tmp(i - 1), tmp(i), tmp(i + 1), tmp(i + 2)]
-
+    r = get('https://codeforces.com/api/contest.standings?contestId=1460&from=1&count=30&showUnofficial=true').json()['result']['rows']
+    r = list(map(lambda a: [a['rank'], a['party']['members'][0]['handle'], a['points']], r))
+    wanted_rank = []
+    for t in r:
+        if t[1] in ['dlwocks31', 'diordhd']:
+            for i in range(-1, 2):
+                wanted_rank.append(t[0] + i)
+    return [i for i in r if i[0] in wanted_rank]
 
 def stringify_data(data):
     mxnum = len(str(data[-1][0]))
