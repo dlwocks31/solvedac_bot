@@ -35,7 +35,7 @@ def download_json():
 def send_slack(message):
     return post(url, json={'text': message})
 
-def main():
+def generate_data():
     ls = ranklist()
     idx = None
     for i, user in enumerate(ls):
@@ -48,13 +48,20 @@ def main():
     def tmp(i):
         return [i + 1, ls[i]['user_id'], '{:,}'.format(ls[i]['exp'])]
 
-    data = [tmp(i - 2), tmp(i - 1), tmp(i), tmp(i + 1), tmp(i + 2)]
+    return [tmp(i - 2), tmp(i - 1), tmp(i), tmp(i + 1), tmp(i + 2)]
+
+
+def stringify_data(data):
+    mxnum = len(str(data[-1][0]))
+    mxlen = len(max((i[1] for i in data), key=len))
+    fmt = f'%{mxnum}d. %{mxlen}s - %s'
+    return '```' + '\n'.join(fmt % tuple(l) for l in data) + '```'
+
+def main():
+    data = generate_data()
     if data != download_json():
         upload_json(data)
-        mxnum = len(str(data[-1][0]))
-        mxlen = len(max((i[1] for i in data), key=len))
-        fmt = f'%{mxnum}d. %{mxlen}s - %s'
-        text = '```' + '\n'.join(fmt % tuple(l) for l in data) + '```'
+        text = stringify_data(data)
         resp = send_slack(text)
         return [resp.status_code, text]
     else:
